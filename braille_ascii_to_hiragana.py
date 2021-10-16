@@ -25,19 +25,18 @@ def main():
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('--map-file', default='tables/braille_ascii_to_hiragana.tsv')
     parser.add_argument('-i', '--input-col', type=int, default=-1)
-    parser.add_argument('infile')
+    parser.add_argument('infile', type=argparse.FileType('r'))
     args = parser.parse_args()
 
     with open(args.map_file) as fin:
         br_map = dict(x.strip().split() for x in fin)
     
-    with open(args.infile) as fin:
-        for line in fin:
-            cols = line.rstrip('\n').split('\t')
-            br = cols[args.input_col]
-            ja = translate(br, br_map)
-            if ja:
-                print('\t'.join(cols + [ja]))
+    for line in args.infile:
+        cols = line.rstrip('\n').split('\t')
+        br = cols[args.input_col]
+        ja = translate(br, br_map)
+        if ja:
+            print('\t'.join(cols + [ja]))
     
 
 if __name__ == '__main__':
